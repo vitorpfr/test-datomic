@@ -11,5 +11,10 @@
    :course/name s/Str})
 
 (def Semester
-  {:semester/year        java.lang.Long
-   :semester/season      s/Keyword})
+  {:semester/year   java.lang.Long
+   :semester/season s/Keyword})
+
+(def Registration
+  {:reg/course   Course
+   :reg/semester Semester
+   :reg/student  Student})

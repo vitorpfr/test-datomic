@@ -16,6 +16,9 @@
   (println (str "db with uri " db-uri " deleted"))
   (d/delete-database db-uri))
 
+(defn restart-db! [db-uri]
+  (delete-db! db-uri)
+  (create-and-open-db! db-uri))
 
 (def schema [{:db/ident       :student/first
               :db/valueType   :db.type/string
@@ -68,35 +71,47 @@
 (defn create-schema! [conn]
   (d/transact conn schema))
 
-; problema: se eu transacionar mais de 1 sample, ele gera samples com id igual pq é string
-; solução: mudar id string pra uuid
+; TODO: figure out how to generate mass registrations
 (defn generate-mass-data! [conn]
-  (dotimes [n 5]
+  (dotimes [n 50]
     (let [courses (g/sample 40 m/Course db.gen/leaf-gens)
           students (g/sample 40 m/Student db.gen/leaf-gens)
-          data (concat courses students)]
-      (println data)
-      (d/transact conn data)
-      ;(pprint @(d/transact conn (concat courses students)))
-      )))
-
-(g/sample 20 m/Course db.gen/leaf-gens)
+          semesters (g/sample 40 m/Semester db.gen/leaf-gens)
+          data (concat courses students semesters)]
+      @(d/transact conn data))))
 
 (defn create-sample-data! [conn]
   (d/transact conn [{:semester/year   2018
                      :semester/season :fall}
 
                     {:course/id "BIO-101"}
+                    {:course/id "CHE-101"}
 
                     {:student/first "John"
                      :student/last  "Doe"
-                     :student/email "johndoe@university.edu"}])
+                     :student/email "johndoe@university.edu"}
+
+                    {:student/first "Mary"
+                     :student/last  "Poppins"
+                     :student/email "marypoppins@university.edu"}])
 
   (d/transact conn [{:reg/course [:course/id "BIO-101"]
                      :reg/semester [:semester/year+season [2018 :fall]]
-                     :reg/student [:student/email "johndoe@university.edu"]}])
+                     :reg/student [:student/email "johndoe@university.edu"]}
+
+                    {:reg/course [:course/id "BIO-101"]
+                     :reg/semester [:semester/year+season [2018 :fall]]
+                     :reg/student [:student/email "marypoppins@university.edu"]}
+
+                    {:reg/course [:course/id "CHE-101"]
+                     :reg/semester [:semester/year+season [2018 :fall]]
+                     :reg/student [:student/email "marypoppins@university.edu"]}])
   (println "data loaded into db"))
 
+(defn load-db-with-sample-data!
+  [conn]
+  (create-schema! conn)
+  (create-sample-data! conn))
 
 
 

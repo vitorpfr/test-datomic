@@ -24,3 +24,7 @@
   (d/q '[:find (pull ?e [* {:reg/course [*]} {:reg/student [*]} {:reg/semester [*]}])
          :where [?e :reg/semester+course+student]]
        db))
+
+(defn entity
+  [db ent]
+  (d/pull db '[*] ent))
