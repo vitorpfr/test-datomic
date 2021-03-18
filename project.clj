@@ -8,4 +8,4 @@
                  [prismatic/schema "1.1.12"]
                  [org.clojure/test.check "1.1.0"]
                  [prismatic/schema-generators "0.1.3"]]
-  :repl-options {:init-ns test-datomic.core})
+  :repl-options {:init-ns test-datomic.one-db})

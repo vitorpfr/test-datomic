@@ -26,5 +26,21 @@
 (db.ent/all-courses (d/db conn))
 (db.ent/all-registrations (d/db conn))
 
+; adding an additional entity to the origin db
+(d/transact conn [{:course/id "CHE-105"}])
+(d/transact conn [{:student/email "a@b.c"
+                   :student/first "ola"}])
+
 ; check data integrity (are dbs equal?)
-(data-integrity/verify db-uri db-uri-replica {:id-attrs [:course/id]})
+(data-integrity/verify db-uri db-uri-replica)
+
+;(defn get-unique-id-attrs [db]
+;  (d/q '[:find [?v ...]
+;         :where
+;         [?e :db/unique :db.unique/identity]
+;         [?e :db/ident ?v]]
+;       db))
+;
+;(get-unique-id-attrs (d/db conn))
+;
+;(test-datomic.db.entities/one (d/db conn) 10)

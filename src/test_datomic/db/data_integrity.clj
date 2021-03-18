@@ -8,8 +8,15 @@
                                            :in $ ?a
                                            :where [?e ?a]] db id-attr)))
 
-(defn ^:private get-entities-aggs [db id-attrs]
-  (reduce (partial assoc-entities-count db) {} id-attrs))
+(defn get-unique-id-attrs [db]
+  (d/q '[:find [?v ...]
+         :where
+         [?e :db/unique :db.unique/identity]
+         [?e :db/ident ?v]]
+       db))
+
+(defn ^:private get-entities-aggs [db]
+  (reduce (partial assoc-entities-count db) {} (get-unique-id-attrs db)))
 
 (defn ^:private get-transactions-aggs [db]
   (let [tx-count (d/q '[:find (count ?tx) .
@@ -27,8 +34,8 @@
   {:count (d/q '[:find (count ?a) .
                  :where [_ :db.install/attribute ?a]] db)})
 
-(defn ^:private get-db-aggs [db id-attrs]
-  {:entities     (get-entities-aggs db id-attrs)
+(defn ^:private get-db-aggs [db]
+  {:entities     (get-entities-aggs db)
    :transactions (get-transactions-aggs db)
    :attributes   (get-attributes-aggs db)})
 
@@ -38,16 +45,16 @@
     {db-one-uri (first diff)
      db-two-uri (second diff)}))
 
-(defn ^:private db-metrics [db-uri id-attrs]
+(defn ^:private db-metrics [db-uri]
   (-> (d/connect db-uri)
       d/db
-      (get-db-aggs id-attrs)))
+      get-db-aggs))
 
 (defn verify
   "Verifies if two different dbs can be considered equivalent (same aggregations of entities, attributes and transactions)"
-  [source-db-uri target-db-uri {:keys [id-attrs]}]
-  (let [source-db-metrics (db-metrics source-db-uri id-attrs)
-        target-db-metrics (db-metrics target-db-uri id-attrs)]
+  [source-db-uri target-db-uri]
+  (let [source-db-metrics (db-metrics source-db-uri)
+        target-db-metrics (db-metrics target-db-uri)]
     (if (= source-db-metrics target-db-metrics)
       {:result :ok}
       {:result :nok

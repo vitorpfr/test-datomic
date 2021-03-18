@@ -25,6 +25,6 @@
          :where [?e :reg/semester+course+student]]
        db))
 
-(defn entity
+(defn one
   [db ent]
   (d/pull db '[*] ent))
