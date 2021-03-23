@@ -19,6 +19,28 @@
          :where [?e :course/id]]
        db))
 
+(defn course-count
+  [db]
+  (d/q '[:find (count ?e) .
+         :where [?e :course/id]]
+       db))
+
+(defn course-count-optimized
+  [db]
+  (count (d/qseq {:query '[:find [?e ...]
+                           :where [?e :course/id]]
+                  :args  [db]})))
+
+(defn course-count-optimized-two
+  [db]
+  (count (d/qseq {:query '[:find ?e
+                           :where [?e :course/id]]
+                  :args  [db]})))
+
+(defn course-count-optimized-three
+  [db]
+  (count (seq (d/datoms db :avet :course/id))))
+
 (defn all-registrations
   [db]
   (d/q '[:find (pull ?e [* {:reg/course [*]} {:reg/student [*]} {:reg/semester [*]}])

@@ -3,7 +3,8 @@
   (:require [datomic.api :as d]
             [schema-generators.generators :as g]
             [test-datomic.db.generators :as db.gen]
-            [test-datomic.model :as m]))
+            [test-datomic.model :as m]
+            [schema.core :as s]))
 
 (def db-uri "datomic:dev://localhost:4334/school")
 
@@ -73,12 +74,17 @@
 
 ; TODO: figure out how to generate mass registrations
 (defn generate-mass-data! [conn]
-  (dotimes [n 50]
+  (dotimes [n 200000]
     (let [courses (g/sample 40 m/Course db.gen/leaf-gens)
           students (g/sample 40 m/Student db.gen/leaf-gens)
           semesters (g/sample 40 m/Semester db.gen/leaf-gens)
           data (concat courses students semesters)]
       @(d/transact conn data))))
+
+(defn generate-lots-of-entities [conn how-many-batches]
+  (dotimes [n how-many-batches]
+    (let [courses (g/sample 40 {:course/id s/Uuid})]
+      @(d/transact conn courses))))
 
 (defn create-sample-data! [conn]
   (d/transact conn [{:semester/year   2018

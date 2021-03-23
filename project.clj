@@ -7,5 +7,6 @@
                  [com.datomic/datomic-pro "1.0.6269"]
                  [prismatic/schema "1.1.12"]
                  [org.clojure/test.check "1.1.0"]
-                 [prismatic/schema-generators "0.1.3"]]
+                 [prismatic/schema-generators "0.1.3"]
+                 [com.clojure-goes-fast/clj-memory-meter "0.1.3"]]
   :repl-options {:init-ns test-datomic.one-db})

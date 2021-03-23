@@ -4,9 +4,16 @@
 
 (defn ^:private assoc-entities-count
   [db result id-attr]
-  (assoc-in result [:count id-attr] (d/q '[:find (count ?e) .
-                                           :in $ ?a
-                                           :where [?e ?a]] db id-attr)))
+  (time (assoc-in result [:count id-attr] (d/q '[:find (count ?e) .
+                                                 :in $ ?a
+                                                 :where [?e ?a]] db id-attr))))
+
+(defn ^:private assoc-entities-count-optimized
+  [db result id-attr]
+  (time (assoc-in result [:count id-attr] (ffirst (d/qseq {:query '[:find (count ?e)
+                                                                    :in $ ?a
+                                                                    :where [?e ?a]]
+                                                           :args  [db id-attr]})))))
 
 (defn get-unique-id-attrs [db]
   (d/q '[:find [?v ...]
@@ -16,7 +23,7 @@
        db))
 
 (defn ^:private get-entities-aggs [db]
-  (reduce (partial assoc-entities-count db) {} (get-unique-id-attrs db)))
+  (reduce (partial assoc-entities-count-optimized db) {} (get-unique-id-attrs db)))
 
 (defn ^:private get-transactions-aggs [db]
   (let [tx-count (d/q '[:find (count ?tx) .
@@ -58,7 +65,7 @@
     (if (= source-db-metrics target-db-metrics)
       {:result :ok}
       {:result :nok
-       :diff (dbs-differences source-db-uri source-db-metrics target-db-uri target-db-metrics)})))
+       :diff   (dbs-differences source-db-uri source-db-metrics target-db-uri target-db-metrics)})))
 
 ;; TESTING: misc
 

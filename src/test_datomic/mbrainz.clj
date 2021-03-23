@@ -21,4 +21,4 @@
 (def conn-segment (second conns))
 
 ; check data integrity (are dbs equal?)
-(data-integrity/verify db-uri db-uri-segment {:id-attrs [:artist/gid]})
+(data-integrity/verify db-uri db-uri-segment)
