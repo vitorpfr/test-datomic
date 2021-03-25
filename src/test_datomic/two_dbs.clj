@@ -32,7 +32,7 @@
                    :student/first "ola"}])
 
 ; check data integrity (are dbs equal?)
-(data-integrity/verify db-uri db-uri-replica)
+(data-integrity/equivalent-dbs? db-uri db-uri-replica nil)
 
 ;(defn get-unique-id-attrs [db]
 ;  (d/q '[:find [?v ...]
@@ -44,13 +44,13 @@
 ;(get-unique-id-attrs (d/db conn))
 ;
 ;(test-datomic.db.entities/one (d/db conn) 10)
-
-(reduce + 0 (eduction (map (constantly 1)) (d/datoms (d/db conn) :aevt :db.install/attribute)))
-(reduce + 0 (eduction (map (constantly 1)) (d/datoms (d/db conn) :aevt :db/txInstant)))
-
-(d/q '[:find (count ?a) .
-       :where [_ :db.install/attribute ?a]] (d/db conn))
-
-(count (d/qseq {:query '[:find ?tx
-                         :where [?tx :db/txInstant]]
-                :args  [(d/db conn)]}))
+;
+;(reduce + 0 (eduction (map (constantly 1)) (d/datoms (d/db conn) :aevt :db.install/attribute)))
+;(reduce + 0 (eduction (map (constantly 1)) (d/datoms (d/db conn) :aevt :db/txInstant)))
+;
+;(d/q '[:find (count ?a) .
+;       :where [_ :db.install/attribute ?a]] (d/db conn))
+;
+;(count (d/qseq {:query '[:find ?tx
+;                         :where [?tx :db/txInstant]]
+;                :args  [(d/db conn)]}))

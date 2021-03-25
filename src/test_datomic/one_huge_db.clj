@@ -56,5 +56,5 @@
 
 (test-count-query)
 
-(test-datomic.db.data-integrity/equivalent-dbs? db-uri db-uri nil)
+(time (test-datomic.db.data-integrity/equivalent-dbs? db-uri db-uri nil))
 
