@@ -81,10 +81,15 @@
           data (concat courses students semesters)]
       @(d/transact conn data))))
 
-(defn generate-lots-of-entities [conn how-many-batches]
+(defn generate-lots-of-courses [conn how-many-batches]
   (dotimes [n how-many-batches]
     (let [courses (g/sample 40 {:course/id s/Uuid})]
       @(d/transact conn courses))))
+
+(defn generate-lots-of-students [conn how-many-batches]
+  (dotimes [n how-many-batches]
+    (let [students (g/sample 40 {:student/id s/Uuid})]
+      @(d/transact conn students))))
 
 (defn create-sample-data! [conn]
   (d/transact conn [{:semester/year   2018

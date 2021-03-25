@@ -41,6 +41,18 @@
   [db]
   (count (seq (d/datoms db :avet :course/id))))
 
+(defn course-count-optimized-adv-1
+  [db]
+  (reduce + 0 (eduction (map (constantly 1)) (d/datoms db :avet :course/id))))
+
+(defn course-count-optimized-adv-2
+  [db]
+  (transduce (map (constantly 1)) + 0 (d/datoms db :avet :course/id)))
+
+(defn course-count-optimized-adv-3
+  [db]
+  (transduce (map (constantly 1)) + 0 (d/datoms db :aevt :course/id)))
+
 (defn all-registrations
   [db]
   (d/q '[:find (pull ?e [* {:reg/course [*]} {:reg/student [*]} {:reg/semester [*]}])
