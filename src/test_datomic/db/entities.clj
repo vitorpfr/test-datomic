@@ -53,6 +53,10 @@
   [db]
   (transduce (map (constantly 1)) + 0 (d/datoms db :aevt :course/id)))
 
+(defn course-count-optimized-adv-4
+  [db]
+  (.count (java.util.stream.StreamSupport/stream (.spliterator (d/datoms db :avet :course/id)) false)))
+
 (defn all-registrations
   [db]
   (d/q '[:find (pull ?e [* {:reg/course [*]} {:reg/student [*]} {:reg/semester [*]}])

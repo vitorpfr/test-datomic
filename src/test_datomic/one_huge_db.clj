@@ -24,7 +24,7 @@
 ;                   :db/cardinality :db.cardinality/one}])
 
 ;(db.config/generate-lots-of-courses conn 20000)
-(db.config/generate-lots-of-students conn 20000)
+;(db.config/generate-lots-of-students conn 20000)
 
 ;(db.ent/all-courses (d/db conn))
 
@@ -43,18 +43,19 @@
   (println "count with simple count of d/datoms on :avet")
   (time (println (db.ent/course-count-optimized-three (d/db conn))))
   (println "--------------------")
+  (println "count with d/datoms on :avet and java stuff")
+  (time (println (db.ent/course-count-optimized-adv-4 (d/db conn))))
+  (println "--------------------")
   (println "count with d/datoms on :avet and eduction")
   (time (println (db.ent/course-count-optimized-adv-1 (d/db conn))))
   ;(println "--------------------")
   ;(println "count with d/datoms on :avet and transduce")
   ;(time (println (db.ent/course-count-optimized-adv-2 (d/db conn))))
-  (println "--------------------")
-  (println "count with d/datoms on :aevt and eduction")
-  (time (println (db.ent/course-count-optimized-adv-3 (d/db conn))))
 
+  ;(println "--------------------")
+  ;(println "count with d/datoms on :aevt and eduction")
+  ;(time (println (db.ent/course-count-optimized-adv-3 (d/db conn))))
   )
 
 (test-count-query)
-
-(time (test-datomic.db.data-integrity/equivalent-dbs? db-uri db-uri nil))
 

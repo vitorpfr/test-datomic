@@ -6,8 +6,6 @@
             [test-datomic.model :as m]
             [schema.core :as s]))
 
-(def db-uri "datomic:dev://localhost:4334/school")
-
 (defn create-and-open-db! [db-uri]
   (println (str "db with uri " db-uri " started"))
   (d/create-database db-uri)

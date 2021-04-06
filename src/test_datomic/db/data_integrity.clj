@@ -4,7 +4,7 @@
 
 (defn ^:private get-entity-count
   [db db-order id-attr]
-  (let [entity-count (reduce + 0 (eduction (map (constantly 1)) (d/datoms db :avet id-attr)))]
+  (let [entity-count (reduce + 0 (eduction (map (constantly 1)) (d/datoms db :aevt id-attr)))]
     {:count {id-attr entity-count}}))
 
 (defn ^:private get-unique-id-attrs [db db-order]
@@ -72,8 +72,3 @@
                    :data            first-db-metrics}
                   {:equivalent-dbs? false
                    :data            (dbs-differences first-db-metrics second-db-metrics)}))))
-
-;; TESTING: misc
-
-
-; end of testing
