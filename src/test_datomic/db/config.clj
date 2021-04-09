@@ -79,6 +79,12 @@
           data (concat courses students semesters)]
       @(d/transact conn data))))
 
+(defn generate-single-course [conn how-many-times]
+  (dotimes [n how-many-times]
+    ;(println "basis-t" (d/basis-t (d/db conn)) "next-t" (d/next-t (d/db conn)))
+    (let [courses (g/sample 1 {:course/id s/Uuid})]
+      @(d/transact conn courses))))
+
 (defn generate-lots-of-courses [conn how-many-batches]
   (dotimes [n how-many-batches]
     (let [courses (g/sample 40 {:course/id s/Uuid})]
