@@ -63,6 +63,12 @@
          :where [?e :reg/semester+course+student]]
        db))
 
+(defn all-transactions
+  [db]
+  (d/q '[:find [?e ...]
+         :where [?e :db/txInstant]]
+       db))
+
 (defn one
   [db ent]
   (d/pull db '[*] ent))

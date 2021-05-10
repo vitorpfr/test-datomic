@@ -70,18 +70,16 @@
 (defn create-schema! [conn]
   (d/transact conn schema))
 
-; TODO: figure out how to generate mass registrations
 (defn generate-mass-data! [conn]
   (dotimes [n 200000]
-    (let [courses (g/sample 40 m/Course db.gen/leaf-gens)
-          students (g/sample 40 m/Student db.gen/leaf-gens)
+    (let [courses   (g/sample 40 m/Course db.gen/leaf-gens)
+          students  (g/sample 40 m/Student db.gen/leaf-gens)
           semesters (g/sample 40 m/Semester db.gen/leaf-gens)
-          data (concat courses students semesters)]
+          data      (concat courses students semesters)]
       @(d/transact conn data))))
 
 (defn generate-single-course [conn how-many-times]
   (dotimes [n how-many-times]
-    ;(println "basis-t" (d/basis-t (d/db conn)) "next-t" (d/next-t (d/db conn)))
     (let [courses (g/sample 1 {:course/id s/Uuid})]
       @(d/transact conn courses))))
 
@@ -110,17 +108,17 @@
                      :student/last  "Poppins"
                      :student/email "marypoppins@university.edu"}])
 
-  (d/transact conn [{:reg/course [:course/id "BIO-101"]
+  (d/transact conn [{:reg/course   [:course/id "BIO-101"]
                      :reg/semester [:semester/year+season [2018 :fall]]
-                     :reg/student [:student/email "johndoe@university.edu"]}
+                     :reg/student  [:student/email "johndoe@university.edu"]}
 
-                    {:reg/course [:course/id "BIO-101"]
+                    {:reg/course   [:course/id "BIO-101"]
                      :reg/semester [:semester/year+season [2018 :fall]]
-                     :reg/student [:student/email "marypoppins@university.edu"]}
+                     :reg/student  [:student/email "marypoppins@university.edu"]}
 
-                    {:reg/course [:course/id "CHE-101"]
+                    {:reg/course   [:course/id "CHE-101"]
                      :reg/semester [:semester/year+season [2018 :fall]]
-                     :reg/student [:student/email "marypoppins@university.edu"]}])
+                     :reg/student  [:student/email "marypoppins@university.edu"]}])
   (println "data loaded into db"))
 
 (defn load-db-with-sample-data!

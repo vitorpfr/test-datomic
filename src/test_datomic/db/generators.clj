@@ -4,4 +4,6 @@
             [schema.core :as s]))
 
 (def anything-but-empty-string (gen/such-that #(not= % "") gen/string-alphanumeric))
-(def leaf-gens {s/Str anything-but-empty-string})
+(def any-int-but-zero (gen/fmap inc gen/nat))
+(def leaf-gens {s/Str anything-but-empty-string
+                s/Int any-int-but-zero})

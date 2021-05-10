@@ -1,4 +1,4 @@
-(ns test-datomic.replica
+(ns test-datomic.replicas.replica
   (:require [datomic.api :as d]
             [test-datomic.db.config :as db.config]
             [test-datomic.db.entities :as db.ent]))
@@ -26,3 +26,5 @@
 
 (db.ent/all-courses (d/db conn))
 (db.ent/all-courses (d/db conn-replica))
+
+; basis-t of original and replica are still equal, however, datomic cannot guarantee that
