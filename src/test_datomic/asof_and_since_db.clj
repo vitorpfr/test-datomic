@@ -4,8 +4,8 @@
             [schema.core :as s]
             [test-datomic.db.entities :as db.ent]
             [test-datomic.db.config :as db.config]
-            [schema-generators.generators :as g])
-  (:import (java.time LocalDateTime ZoneId)))
+            [schema-generators.generators :as g]
+            [clojure.pprint :as pp]))
 
 (s/set-fn-validation! true)
 
@@ -20,7 +20,8 @@
 (Thread/sleep 5000)
 (def t1 (java.util.Date.))
 (Thread/sleep 2500)
-@(d/transact conn [{:course/id "MAT-101"}])
+(let [tx @(d/transact conn [{:course/id "MAT-101"}])]
+  (def t-tx (-> tx :tx-data first :v)))
 (Thread/sleep 2500)
 (def t2 (java.util.Date.))
 (Thread/sleep 5000)
@@ -30,6 +31,33 @@
 
 ; defining 'whole' snapshot
 (def db (d/db conn))
+
+
+; querying data until the transaction time where MAT-101 is inserted
+(db.ent/all-courses (-> db
+                        (d/as-of t-tx)))
+; query result:
+(comment [[{:db/id 17592186045419, :course/id "BIO-101"}]
+          [{:db/id 17592186045420, :course/id "CHE-101"}]
+          [{:db/id 17592186045428, :course/id "MAT-101"}]])
+; conclusion: it returns MAT-101, therefore end interval is inclusive
+
+
+
+; querying data from the transaction time where MAT-101 is inserted and beyond
+(db.ent/all-courses (-> db
+                        (d/since t-tx)))
+; query result:
+(comment [[{:db/id 17592186045430, :course/id "FIS-101"}]])
+; result: doesn't return MAT-101, therefore start interval is not inclusive
+
+; summary: start is not inclusive, but end is!
+
+;;;;;;;;;;;;;;;;;;;;;
+;;;; EXPLORATION ;;;;
+;;;;;;;;;;;;;;;;;;;;;
+
+
 
 (d/basis-t db)
 (d/basis-t (d/as-of db t2))
@@ -81,7 +109,6 @@
 (d/basis-t db)
 (d/basis-t (d/as-of db t1))
 
-(println t1)
 ; getting as-of-t seems like a solution!
 (d/as-of-t (d/as-of db t1))
 
@@ -96,7 +123,6 @@
 (let [as-of-db (d/as-of db t1)
       as-of-t (d/as-of-t as-of-db)
       log (d/log conn)]
-  (println (d/t->tx as-of-t))
   (-> log
       (d/tx-range 1 t1)
       last
@@ -109,6 +135,7 @@
 ;       :where [?tx :db/txInstant]]
 ;     (d/as-of db t1))
 
+; option 3: accessing index directly
 (-> (d/datoms (d/as-of db t1) :aevt :db/txInstant)
     last
     :v)

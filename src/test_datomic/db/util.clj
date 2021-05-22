@@ -1,6 +1,7 @@
 (ns test-datomic.db.util
   (:require [datomic.api :as d])
-  (:import [java.util.concurrent ExecutionException]))
+  (:import [java.util.concurrent ExecutionException]
+           (java.util Date)))
 
 (defn- retry?
   [ex-data]
@@ -82,3 +83,14 @@
                           (< (inc peek-t) max-t))))
          ;; flatten the chunks
          (eduction cat))))
+
+(defmacro do-returning-first
+  [x & forms]
+  `(let [x# ~x]
+     ~@forms
+     x#))
+
+(defn now-secs
+  "current time in UTC epoch seconds"
+  []
+  (-> (Date.) .getTime (/ 1000) int))

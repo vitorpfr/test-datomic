@@ -8,6 +8,7 @@
 
 (s/set-fn-validation! true)
 
+;(def db-uri "datomic:dev://192.168.1.159:4334/school")
 (def db-uri "datomic:dev://localhost:4334/school")
 (def conn (db.config/restart-db! db-uri))
 (db.config/create-schema! conn)
